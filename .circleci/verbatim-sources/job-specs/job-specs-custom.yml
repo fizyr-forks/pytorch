@@ -7,8 +7,7 @@
     machine:
       image: ubuntu-1604:201903-01
     steps:
-    # See Note [Workspace for CircleCI scripts] in job-specs-setup.yml
-    - attach_scripts
+    - checkout
     - setup_linux_system_environment
     - setup_ci_environment
     - run:
@@ -58,8 +57,7 @@
     machine:
       image: ubuntu-1604:201903-01
     steps:
-    # See Note [Workspace for CircleCI scripts] in job-specs-setup.yml
-    - attach_scripts
+    - checkout
     - setup_linux_system_environment
     - setup_ci_environment
     - run:
@@ -101,8 +99,6 @@
     macos:
       xcode: "9.4.1"
     steps:
-      # See Note [Workspace for CircleCI scripts] in job-specs-setup.yml
-      - attach_scripts
       - checkout
       - run_brew_for_macos_build
       - run:
@@ -126,14 +122,10 @@
             chmod a+x .jenkins/pytorch/macos-build.sh
             unbuffer .jenkins/pytorch/macos-build.sh 2>&1 | ts
 
-            # copy with -a to preserve relative structure (e.g., symlinks), and be recursive
-            cp -a ~/project ~/workspace
-
       - persist_to_workspace:
-          root: ~/workspace
+          root: ~/project
           paths:
             - miniconda3
-            - project
 
   pytorch_macos_10_13_py3_test:
     environment:
@@ -141,9 +133,9 @@
     macos:
       xcode: "9.4.1"
     steps:
-      # See Note [Workspace for CircleCI scripts] in job-specs-setup.yml
-      # This workspace also carries binaries from the build job
-      - attach_scripts
+      - checkout
+      - attach_workspace:
+          at: ~/workspace
       - run_brew_for_macos_build
       - run:
           name: Test
@@ -151,9 +143,6 @@
           command: |
             set -e
             export IN_CIRCLECI=1
-
-            # copy with -a to preserve relative structure (e.g., symlinks), and be recursive
-            cp -a ~/workspace/project/. ~/project
 
             chmod a+x .jenkins/pytorch/macos-test.sh
             unbuffer .jenkins/pytorch/macos-test.sh 2>&1 | ts
@@ -169,7 +158,7 @@
     machine:
       image: ubuntu-1604:201903-01
     steps:
-    - attach_scripts
+    - checkout
     - setup_linux_system_environment
     - checkout
     - setup_ci_environment
@@ -255,7 +244,7 @@
     machine:
       image: ubuntu-1604:201903-01
     steps:
-    - attach_scripts
+    - checkout
     - setup_linux_system_environment
     - checkout
     - setup_ci_environment
@@ -291,7 +280,7 @@
     machine:
       image: ubuntu-1604:201903-01
     steps:
-    - attach_scripts
+    - checkout
     - run:
         name: filter out not PR runs
         no_output_timeout: "5m"
@@ -333,8 +322,6 @@
     macos:
       xcode: "11.2.1"
     steps:
-      # See Note [Workspace for CircleCI scripts] in job-specs-setup.yml
-      - attach_scripts
       - checkout
       - run_brew_for_ios_build
       - run:
@@ -451,10 +438,8 @@
     machine:
       image: ubuntu-1604:201903-01
     steps:
-    # See Note [Workspace for CircleCI scripts] in job-specs-setup.yml
-    - attach_scripts
-    - setup_linux_system_environment
     - checkout
+    - setup_linux_system_environment
     - setup_ci_environment
     - run:
         name: Bazel Build
@@ -490,8 +475,7 @@
     machine:
       image: ubuntu-1604:201903-01
     steps:
-    # See Note [Workspace for CircleCI scripts] in job-specs-setup.yml
-    - attach_scripts
+    - checkout
     - setup_linux_system_environment
     - setup_ci_environment
     - run:
@@ -538,8 +522,7 @@
     machine:
       image: ubuntu-1604:201903-01
     steps:
-    # See Note [Workspace for CircleCI scripts] in job-specs-setup.yml
-    - attach_scripts
+    - checkout
     - setup_linux_system_environment
     - setup_ci_environment
     - run:
